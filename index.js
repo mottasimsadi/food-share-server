@@ -58,6 +58,13 @@ async function run() {
 
     const foodCollection = client.db("foodDB").collection("foodShare");
 
+    // POST new food share item
+    app.post("/add_food", async (req, res) => {
+      const newFood = req.body;
+      const result = await foodCollection.insertOne(newFood);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
@@ -72,7 +79,7 @@ async function run() {
 run().catch(console.dir);
 
 // Root route
-app.get("/", verifyFirebaseToken, async (req, res) => {
+app.get("/", async (req, res) => {
   res.send("Food Share is running perfectly!");
 });
 
