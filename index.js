@@ -99,6 +99,13 @@ async function run() {
       res.send(result);
     });
 
+    // POST create new food request
+    app.post("/requests", async (req, res) => {
+      const requestedFood = req.body;
+      const result = await foodCollection.insertOne(requestedFood);
+      res.send(result);
+    });
+
     
 
     // Send a ping to confirm a successful connection
