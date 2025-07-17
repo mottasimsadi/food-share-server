@@ -3,7 +3,7 @@ const cors = require("cors");
 
 const dotenv = require("dotenv");
 dotenv.config();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 const admin = require("firebase-admin");
 
@@ -91,6 +91,15 @@ async function run() {
 
       res.send(result);
     });
+
+    // GET food by id
+    app.get("/food/:id", async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await foodCollection.findOne(query);
+      res.send(result);
+    });
+
+    
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
