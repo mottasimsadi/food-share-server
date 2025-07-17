@@ -59,9 +59,36 @@ async function run() {
     const foodCollection = client.db("foodDB").collection("foodShare");
 
     // POST new food share item
-    app.post("/add_food", async (req, res) => {
+    app.post("/add-food", async (req, res) => {
       const newFood = req.body;
       const result = await foodCollection.insertOne(newFood);
+      res.send(result);
+    });
+
+    // GET available foods with optional search and sorting
+    app.get("/available-foods", async (req, res) => {
+      const search = req.query.search || "";
+      const sortBy = req.query.sort || "expireDate"; // default to expireDate
+
+      const query = {
+        status: "available",
+        foodName: { $regex: search, $options: "i" },
+      };
+
+      const sortOptions = {};
+      if (sortBy === "expireDate") {
+        sortOptions.expireDate = 1; // ascending
+      } else if (sortBy === "quantity") {
+        sortOptions.foodQuantity = -1; // descending
+      } else if (sortBy === "location") {
+        sortOptions.pickupLocation = 1; // ascending
+      }
+
+      const result = await foodCollection
+        .find(query)
+        .sort(sortOptions)
+        .toArray();
+
       res.send(result);
     });
 
