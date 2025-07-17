@@ -106,7 +106,17 @@ async function run() {
       res.send(result);
     });
 
-    
+    // PATCH update food status
+    app.patch("/food/:id", async (req, res) => {
+      const { id } = req.params;
+      const updates = req.body;
+
+      const query = { _id: new ObjectId(id) };
+      const updateDoc = { $set: { status: updates.status } };
+
+      const result = await foodCollection.updateOne(query, updateDoc);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
