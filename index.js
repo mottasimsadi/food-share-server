@@ -142,7 +142,24 @@ async function run() {
       res.send(result);
     });
 
-    
+    // PATCH update a specific food
+    app.patch("/foods/:id", verifyFirebaseToken, async (req, res) => {
+      const id = req.params.id;
+      const updatedFields = req.body;
+
+      const filter = {
+        _id: new ObjectId(id),
+        donorEmail: req.firebaseUser.email, // Ensure user owns the food
+      };
+
+      const updateDoc = {
+        $set: updatedFields,
+      };
+
+      const result = await foodCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
