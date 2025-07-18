@@ -118,6 +118,16 @@ async function run() {
       res.send(result);
     });
 
+    // GET top 6 most quantity foods
+    app.get("/featured-foods", async (req, res) => {
+      const result = await foodCollection
+        .find({ status: "available" })
+        .sort({ foodQuantity: -1 })
+        .limit(6)
+        .toArray();
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
