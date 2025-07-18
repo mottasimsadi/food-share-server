@@ -128,6 +128,15 @@ async function run() {
       res.send(result);
     });
 
+    // GET current users foods
+    app.get("/manage-foods", verifyFirebaseToken, async (req, res) => {
+      const query = { donorEmail: req.firebaseUser.email };
+      const result = await foodCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
