@@ -101,20 +101,25 @@ async function run() {
 
     // POST create new food request
     app.post("/requests", async (req, res) => {
-      const requestedFood = req.body;
+      const requestedFood = {
+        ...req.body,
+        requestDate: new Date(req.body.requestDate), // Ensure proper date format
+        status: "pending", // Set initial status
+      };
       const result = await foodCollection.insertOne(requestedFood);
       res.send(result);
     });
 
     // PATCH update food status
-    app.patch("/food/:id", async (req, res) => {
-      const { id } = req.params;
-      const updates = req.body;
-
-      const query = { _id: new ObjectId(id) };
-      const updateDoc = { $set: { status: updates.status } };
-
-      const result = await foodCollection.updateOne(query, updateDoc);
+    app.patch("/request/:id", verifyFirebaseToken, async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await foodCollection.updateOne(query, {
+        $set: {
+          status: "requested",
+          requestedBy: req.firebaseUser.email,
+          requestDate: new Date(),
+        },
+      });
       res.send(result);
     });
 
@@ -157,6 +162,16 @@ async function run() {
       };
 
       const result = await foodCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
+    // GET my requested food
+    app.get("/my-requests", verifyFirebaseToken, async (req, res) => {
+      const query = { requestedBy: req.firebaseUser.email };
+      const result = await foodCollection
+        .find(query)
+        .sort({ requestDate: -1 }) // Sort by request date descending
+        .toArray();
       res.send(result);
     });
 
