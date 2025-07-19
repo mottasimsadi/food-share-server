@@ -125,12 +125,22 @@ async function run() {
 
     // GET top 6 most quantity foods
     app.get("/featured-foods", async (req, res) => {
-      const result = await foodCollection
+      const extractNumber = (str) => {
+        const match = str.match(/\d+(\.\d+)?/);
+        return match ? parseFloat(match[0]) : 0;
+      };
+
+      const foods = await foodCollection
         .find({ status: "available" })
-        .sort({ foodQuantity: -1 })
-        .limit(6)
         .toArray();
-      res.send(result);
+
+      const sorted = foods.sort(
+        (a, b) => extractNumber(b.foodQuantity) - extractNumber(a.foodQuantity)
+      );
+
+      const top6 = sorted.slice(0, 6);
+
+      res.send(top6);
     });
 
     // GET current users foods
