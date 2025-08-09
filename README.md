@@ -84,11 +84,11 @@ To get a local copy up and running, follow these simple steps.
 
 1.  **Clone the repository:**
     ```sh
-    git clone https://github.com/Programming-Hero-Web-Course4/b11a11-server-side-mottasimsadi
+    git clone https://github.com/mottasimsadi/food-share-server
     ```
 2.  **Navigate to the project directory:**
     ```sh
-    cd b11a11-server-side-mottasimsadi
+    cd food-share-server
     ```
 3.  **Install NPM packages:**
     ```sh
